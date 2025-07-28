@@ -8,9 +8,10 @@
 import SwiftUI
 import SwiftData
 
-//@Bindable var toDoItem: ToDoItem //this allows us to update the properties of ToDoItem objects
-
 struct NewToDoView: View {
+    @Binding var showNewTask: Bool
+    @Bindable var toDoItem: ToDoItem //this allows us to update the properties of ToDoItem objects
+    @Environment(\.modelContext) var modelContext
     var body: some View {
         VStack{
             Text("Task Title:")
@@ -18,16 +19,17 @@ struct NewToDoView: View {
                 .fontWeight(.bold)
                 .foregroundColor(/*@START_MENU_TOKEN@*/Color(hue: 0.678, saturation: 0.412, brightness: 0.834)/*@END_MENU_TOKEN@*/)
                 
-            TextField("Enter the task description...", text: /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Value@*/.constant("")/*@END_MENU_TOKEN@*/)
+            TextField("Enter the task description...", text: $toDoItem.title, axis: .vertical)
                 .padding()
                 .background(Color(.systemGroupedBackground))
                 .cornerRadius(15)
                 .padding()
-            Toggle(isOn: /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Is On@*/.constant(true)/*@END_MENU_TOKEN@*/) {
+            Toggle(isOn: $toDoItem.isImportant) {
                 Text("Is it important?")
             }
             Button {
-               
+               addToDo()
+                showNewTask = false
             } label: {
                 Text("Save")
                     .foregroundColor(Color.purple)
@@ -35,8 +37,13 @@ struct NewToDoView: View {
         }
             .padding()
     }
+    
+    func addToDo(){
+        let toDo = ToDoItem(title: toDoItem.title, isImportant: toDoItem.isImportant)
+        modelContext.insert(toDo)
+    }
 }
 
 #Preview {
-   // NewToDoView(toDoItem: ToDoItem(title: "", isImportant: false))
+    NewToDoView(showNewTask: .constant(false), toDoItem: ToDoItem(title: "", isImportant: false))
 }
