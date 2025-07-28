@@ -6,9 +6,12 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
     @State private var showNewTask = false //this property keeps track of whether or not we want NewToDoView to open
+    @Query var toDos: [ToDoItem]
+    
     var body: some View {
         VStack{
             HStack{
@@ -31,6 +34,11 @@ struct ContentView: View {
             }
             .padding()
             Spacer()
+            List{
+                ForEach(toDos){ toDoItem in
+                    Text(toDoItem.title)
+                }
+            }
         }
         .padding()
         if showNewTask==true{
